@@ -83,16 +83,19 @@ func math(w http.ResponseWriter, r *http.Request) {
 	minutesN, err := strconv.ParseFloat(t.Minutes, 64)
 	secondsN, err := strconv.ParseFloat(t.Seconds, 64)
 
-	hydrate := hoursN*1000 + minutesN*16.66 + secondsN*0.27
+	hMl := hoursN*1000 + minutesN*16.66 + secondsN*0.27
+	hL := hMl / 1000
+	hOz := hMl * 0.0338140227
 
-	hydrateTotal := strconv.FormatFloat(hydrate, 'f', 2, 64)
+	hydrateml := strconv.FormatFloat(hL, 'f', 2, 64) + "L "
+	hydrateoz := strconv.FormatFloat(hOz, 'f', 2, 64) + "fl oz "
 
 	offline, err := regexp.MatchString("offline", time[0])
 
 	if offline == true {
 		m.FinalMessage = "No stream no water"
 	} else {
-		m.FinalMessage = "Stream has been going for" + " " + BodyString + "." + " " + "At this point you shoulde have drunk" + " " + hydrateTotal + "ml of water"
+		m.FinalMessage = "Stream has been going for" + " " + BodyString + "." + " " + "At this point you should have drunk" + " " + hydrateml + "or" + " " + hydrateoz + "of water"
 	}
 	/*
 			data := struct {
