@@ -52,6 +52,10 @@ func math(w http.ResponseWriter, r *http.Request) {
 		Minutes string
 		Seconds string
 	}
+	type Message struct {
+		FinalMessage string
+	}
+	m := Message{}
 
 	t := Time{}
 
@@ -83,14 +87,22 @@ func math(w http.ResponseWriter, r *http.Request) {
 
 	hydrateTotal := strconv.FormatFloat(hydrate, 'f', 2, 64)
 
-	data := struct {
-		Uptime  string
-		Hydrate string
-	}{
-		Uptime:  BodyString,
-		Hydrate: hydrateTotal,
-	}
+	offline, err := regexp.MatchString("offline", time[0])
 
-	tpl.ExecuteTemplate(w, "index.gohtml", data)
+	if offline == true {
+		m.FinalMessage = "No stream no water"
+	} else {
+		m.FinalMessage = "Stream has been going for" + " " + BodyString + "." + " " + "At this point you shoulde have drunk" + " " + hydrateTotal + "ml of water"
+	}
+	/*
+			data := struct {
+			Uptime  string
+			Hydrate string
+		}{
+			Uptime:  BodyString,
+			Hydrate: hydrateTotal,
+		}
+	*/
+	tpl.ExecuteTemplate(w, "index.gohtml", m)
 	// fmt.Println("Stream has been live for" + " " + bodyString + "," + " " + "You should have drunk" + " " + HydrateTotal + "ml of water so far")
 }
