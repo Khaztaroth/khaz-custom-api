@@ -29,6 +29,7 @@ func main() {
 func math(w http.ResponseWriter, r *http.Request) {
 	//URL querry for getting channel name
 	channel := r.URL.Query().Get("channel")
+	//simple := r.URL.Query().Get("no_message")
 
 	//GET request to DecApi twitch channel uptime endpoint
 	resp, err := http.Get("https://decapi.me/twitch/uptime/" + channel + "?precision=4")
@@ -96,6 +97,7 @@ func math(w http.ResponseWriter, r *http.Request) {
 
 	//Struct to encode resulting message, this information is passed to hte gohtml template
 	type Data struct {
+		//Simple  string
 		User    string
 		Offline bool
 		Uptime  string
