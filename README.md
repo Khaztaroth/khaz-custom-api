@@ -2,6 +2,7 @@
 Small browser-based tool to calculate how much water a streamer should've drunk based on their Twitch stream uptime.
 
 To start, run `go run main.go` 
+By default it will listen on port `8080`
 
 To get a streamer's hydration calculation, add their channel username as a GET request through the URL with the parameter `channel`
 
