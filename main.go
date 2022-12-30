@@ -66,31 +66,45 @@ func math(w http.ResponseWriter, r *http.Request) {
 
 	//Codeblock to check time measure structure and removing anything that's not a number. Stored as a value for later use
 	if hours == true {
-		t.Hours = regLetters.ReplaceAllString(time[0], "")   // strings.Replace(time[0], "hours", "", -1)
-		t.Minutes = regLetters.ReplaceAllString(time[1], "") // strings.Replace(time[1], "minutes", "", -1)
-		t.Seconds = regLetters.ReplaceAllString(time[2], "") // strings.Replace(time[2], "seconds", "", -1)
+		t.Hours = regLetters.ReplaceAllString(time[0], "")
+		t.Minutes = regLetters.ReplaceAllString(time[1], "")
+		t.Seconds = regLetters.ReplaceAllString(time[2], "")
 	} else if minutes == true {
 		t.Hours = "0"
-		t.Minutes = regLetters.ReplaceAllString(time[0], "") // strings.Replace(time[0], "minutes", "", -1)
-		t.Seconds = regLetters.ReplaceAllString(time[1], "") // strings.Replace(time[1], "seconds", "", -1)
+		t.Minutes = regLetters.ReplaceAllString(time[0], "")
+		t.Seconds = regLetters.ReplaceAllString(time[1], "")
 	} else if seconds == true {
 		t.Hours = "0"
 		t.Minutes = "0"
-		t.Seconds = regLetters.ReplaceAllString(time[0], "") // strings.Replace(time[0], "seconds", "", -1)
+		t.Seconds = regLetters.ReplaceAllString(time[0], "")
 	}
 	//Converting string into float64 values to use them in math calculations
-	hoursN, err := strconv.ParseFloat(t.Hours, 64)
-	minutesN, err := strconv.ParseFloat(t.Minutes, 64)
-	secondsN, err := strconv.ParseFloat(t.Seconds, 64)
+	hoursFloat, err := strconv.ParseFloat(t.Hours, 64)
+	minutesFloat, err := strconv.ParseFloat(t.Minutes, 64)
+	secondsFloat, err := strconv.ParseFloat(t.Seconds, 64)
+
+	//Converting time into seconds
+	Seconds := hoursFloat*3600 + minutesFloat*60 + secondsFloat
 
 	//Calculating water intake based on each time measure
-	hMl := hoursN*1000 + minutesN*16.66 + secondsN*0.27
-	hL := hMl / 1000
-	hOz := hMl * 0.0338140227
+	hydrationML := Seconds * 0.213097
+	hydrationL := hydrationML / 1000
+	hydrationOz := hydrationML * 0.0338140227
+
+	//Max water intake per day
+	MaxWaterIntakeLitre := 3.7
+	MaxWaterIntakeOunce := 130
+
+	if hydrationL > float64(MaxWaterIntakeLitre) {
+		hydrationL = 3.7
+	}
+	if hydrationOz > float64(MaxWaterIntakeOunce) {
+		hydrationOz = 130.22
+	}
 
 	//Transforming float64 values to string to use in the final message
-	volumeL := strconv.FormatFloat(hL, 'f', 2, 64) + "L"
-	volumeOz := strconv.FormatFloat(hOz, 'f', 2, 64) + "fl oz"
+	volumeL := strconv.FormatFloat(hydrationL, 'f', 2, 64) + "L"
+	volumeOz := strconv.FormatFloat(hydrationOz, 'f', 2, 64) + "fl oz"
 
 	//Checking if request to DecApi returns the channel as 'offline', used to set a different message
 	offline, err := regexp.MatchString("offline", time[0])
