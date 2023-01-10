@@ -16,3 +16,7 @@ The code uses a template to codify the response. You can customize it to say wha
 `{{uptime}}` The channel's current livestream duration </br>
 `{{ML}}` The final value in millilitres </br>
 `{{OZ}}` The final value in ounces </br>
+
+# Weather API
+
+There's some code that calls Skorpstuff API and replaces the city name to not show my hometown in chat when pulling the command. Normally it would be easier to pull directly from the original API, however this approach was easier to handle the info.
