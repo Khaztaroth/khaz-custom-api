@@ -142,7 +142,7 @@ func weather(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(resp.Body)
 	BodyString := string(body)
 
-	CensoredData := strings.Replace(BodyString, "Chillán, CL", "Birbland", -1)
+	CensoredData := strings.Replace(BodyString, "CITY", "Birbland", -1)
 
 	type Data struct {
 		BodyString   string
