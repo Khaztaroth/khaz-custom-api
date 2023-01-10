@@ -137,11 +137,11 @@ func weather(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("Request Failed: $s", err)
 	}
-	//Storing body from DecApi request as variable
+	//Storing body from Skorpstuff request as variable
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	BodyString := string(body)
-
+	//Replacing City name with some other string
 	CensoredData := strings.Replace(BodyString, "CITY", "Birbland", -1)
 
 	type Data struct {
