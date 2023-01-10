@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -22,11 +23,12 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("/", math)
+	http.HandleFunc("/hydratebot", hydration)
+	http.HandleFunc("/weather", weather)
 	http.ListenAndServe(":8080", nil)
 }
 
-func math(w http.ResponseWriter, r *http.Request) {
+func hydration(w http.ResponseWriter, r *http.Request) {
 	//URL querry for getting channel name
 	channel := r.URL.Query().Get("channel")
 	//simple := r.URL.Query().Get("no_message")
@@ -121,5 +123,35 @@ func math(w http.ResponseWriter, r *http.Request) {
 	info := Data{channel, offline, BodyString, volumeL, volumeOz}
 	//fmt.Println(info)
 
-	tpl.ExecuteTemplate(w, "index.gohtml", info)
+	tpl.ExecuteTemplate(w, "hydration.gohtml", info)
+}
+
+func weather(w http.ResponseWriter, r *http.Request) {
+	//URL querry for getting the place
+	place := r.URL.Query().Get("place")
+	//simple := r.URL.Query().Get("no_message")
+
+	//GET request to ScorpStuff weather API
+	resp, err := http.Get("http://api.scorpstuff.com/weather.php?units=metric&city=" + url.QueryEscape(place))
+
+	if err != nil {
+		fmt.Println("Request Failed: $s", err)
+	}
+	//Storing body from DecApi request as variable
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	BodyString := string(body)
+
+	CensoredData := strings.Replace(BodyString, "Chillán, CL", "Birbland", -1)
+
+	type Data struct {
+		BodyString   string
+		CensoredData string
+	}
+
+	info := Data{BodyString, CensoredData}
+
+	tpl.ExecuteTemplate(w, "weather.gohtml", info)
+
+	// fmt.Println(CensoredData)
 }
