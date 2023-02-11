@@ -6,9 +6,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/subosito/gotenv"
 )
 
 type Parameters struct {
@@ -19,6 +22,7 @@ type Parameters struct {
 var tpl *template.Template
 
 func init() {
+	gotenv.Load()
 	tpl = template.Must(template.ParseGlob("*.gohtml"))
 }
 
@@ -142,7 +146,8 @@ func weather(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(resp.Body)
 	BodyString := string(body)
 	//Replacing City name with some other string
-	CensoredData := strings.Replace(BodyString, "CITY", "Birbland", -1)
+	city := os.Getenv("CITY")
+	CensoredData := strings.Replace(BodyString, city, "Birbland", -1)
 
 	type Data struct {
 		BodyString   string
