@@ -6,9 +6,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/subosito/gotenv"
 )
 
 type Parameters struct {
@@ -19,12 +22,13 @@ type Parameters struct {
 var tpl *template.Template
 
 func init() {
+	gotenv.Load()
 	tpl = template.Must(template.ParseGlob("*.gohtml"))
 }
 
 func main() {
 	http.HandleFunc("/hydratebot", hydration)
-	http.HandleFunc("/weather", weather)
+	http.HandleFunc("/weather", weatherHandler)
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -126,7 +130,8 @@ func hydration(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "hydration.gohtml", info)
 }
 
-func weather(w http.ResponseWriter, r *http.Request) {
+func weatherHandler(w http.ResponseWriter, r *http.Request) {
+
 	//URL querry for getting the place
 	place := r.URL.Query().Get("place")
 	//simple := r.URL.Query().Get("no_message")
@@ -137,21 +142,25 @@ func weather(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("Request Failed: $s", err)
 	}
+
+	city := os.Getenv("CITY")
 	//Storing body from Skorpstuff request as variable
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	BodyString := string(body)
+	bodyString := string(body)
 	//Replacing City name with some other string
-	CensoredData := strings.Replace(BodyString, "Chillán, CL", "Birbland", -1)
+	censoredData := strings.Replace(bodyString, city, "Birbland", -1)
 
 	type Data struct {
 		BodyString   string
 		CensoredData string
 	}
 
-	info := Data{BodyString, CensoredData}
+	d := Data{}
+	d.BodyString = bodyString
+	d.CensoredData = censoredData
 
-	tpl.ExecuteTemplate(w, "weather.gohtml", info)
+	tpl.ExecuteTemplate(w, "weather.gohtml", d)
 
 	// fmt.Println(CensoredData)
 }
