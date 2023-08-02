@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -13,11 +13,6 @@ import (
 
 	"github.com/subosito/gotenv"
 )
-
-type Parameters struct {
-	ChannelName string
-	Precision   string
-}
 
 var tpl *template.Template
 
@@ -45,7 +40,7 @@ func hydration(w http.ResponseWriter, r *http.Request) {
 	}
 	//Storing body from DecApi request as variable
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	BodyString := string(body)
 
 	// Example string for testing
@@ -133,7 +128,6 @@ func hydration(w http.ResponseWriter, r *http.Request) {
 func weather(w http.ResponseWriter, r *http.Request) {
 	//URL querry for getting the place
 	place := r.URL.Query().Get("place")
-	//simple := r.URL.Query().Get("no_message")
 
 	//GET request to ScorpStuff weather API
 	resp, err := http.Get("http://api.scorpstuff.com/weather.php?units=metric&city=" + url.QueryEscape(place))
@@ -143,7 +137,7 @@ func weather(w http.ResponseWriter, r *http.Request) {
 	}
 	//Storing body from Skorpstuff request as variable
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	BodyString := string(body)
 	//Replacing City name with some other string
 	city := os.Getenv("CITY")
