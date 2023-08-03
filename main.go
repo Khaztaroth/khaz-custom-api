@@ -192,21 +192,28 @@ func weather(w http.ResponseWriter, r *http.Request) {
 	windKPH := APIDATA.Current.WindKph
 	windMPH := APIDATA.Current.WindMph
 
+	humidity := APIDATA.Current.Humidity
+	feelsLikeC := APIDATA.Current.FeelslikeC
+	feelsLikeF := APIDATA.Current.FeelslikeF
+
 	//Replacing City name with some other string
 	cityToCensor := os.Getenv("CITY")
 	location := city + "," + " " + region
 	censoredCity := strings.Replace(location, cityToCensor, "Birbland, Somewhere", -1)
 
 	type Data struct {
-		Location string
-		TempC    float64
-		TempF    float64
-		WindDir  string
-		WindKPH  float64
-		WindMPH  float64
+		Location   string
+		TempC      float64
+		TempF      float64
+		WindDir    string
+		WindKPH    float64
+		WindMPH    float64
+		Humidity   int
+		FeelsLikeC float64
+		FeelsLikeF float64
 	}
 
-	info := Data{censoredCity, tempC, tempF, windDir, windKPH, windMPH}
+	info := Data{censoredCity, tempC, tempF, windDir, windKPH, windMPH, humidity, feelsLikeC, feelsLikeF}
 
 	tpl.ExecuteTemplate(w, "weather.gohtml", info)
 }
