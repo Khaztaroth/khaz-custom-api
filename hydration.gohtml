@@ -1,0 +1,5 @@
+{{if .Offline}}
+Channel is offline but you should drink water anyways, for safety
+{{else}}
+{{ .User }} has been live for {{ .Uptime }}. At this point they should have drunk {{ .ML }}, or {{ .OZ}}, of water
+{{end}}
