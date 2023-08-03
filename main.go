@@ -158,7 +158,8 @@ func weather(w http.ResponseWriter, r *http.Request) {
 	place := r.URL.Query().Get("place")
 
 	//GET request to ScorpStuff weather API
-	resp, err := http.Get("https://api.weatherapi.com/v1/current.json?key=c7548475ea364c1a903230343230208&q=" + url.QueryEscape(place) + "&aqi=no")
+	KEY := os.Getenv("KEY")
+	resp, err := http.Get("https://api.weatherapi.com/v1/current.json?key=" + KEY + "=" + url.QueryEscape(place) + "&aqi=no")
 
 	if err != nil {
 		fmt.Println("Request Failed: $s", err)
