@@ -19,4 +19,4 @@ The code uses a template to codify the response. You can customize it to say wha
 
 # Weather API
 
-There's some code that calls Skorpstuff API and replaces the city name to not show my hometown in chat when pulling the command. Normally it would be easier to pull directly from the original API, however this approach was easier to handle the info.
+There's some code that calls https://www.weatherapi.com/my/ and replaces the city name to not show my hometown in chat when pulling the command. Normally it would be easier to pull directly from the original API, however this approach was easier to handle the info.
