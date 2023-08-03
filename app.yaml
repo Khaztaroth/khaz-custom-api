@@ -1,0 +1,5 @@
+runtime: go116
+service: default
+env_variables:
+  CITY: "Chillan, Bio-Bio"
+  KEY: "c7548475ea364c1a903230343230208&q"
