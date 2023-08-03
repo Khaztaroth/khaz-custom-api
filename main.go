@@ -139,33 +139,18 @@ func weather(w http.ResponseWriter, r *http.Request) {
 			Localtime      string  `json:"localtime"`
 		} `json:"location"`
 		Current struct {
-			LastUpdatedEpoch int     `json:"last_updated_epoch"`
-			LastUpdated      string  `json:"last_updated"`
-			TempC            float64 `json:"temp_c"`
-			TempF            float64 `json:"temp_f"`
-			IsDay            int     `json:"is_day"`
-			Condition        struct {
+			TempC     float64 `json:"temp_c"`
+			TempF     float64 `json:"temp_f"`
+			Condition struct {
 				Text string `json:"text"`
-				Icon string `json:"icon"`
-				Code int    `json:"code"`
 			} `json:"condition"`
 			WindMph    float64 `json:"wind_mph"`
 			WindKph    float64 `json:"wind_kph"`
-			WindDegree int     `json:"wind_degree"`
 			WindDir    string  `json:"wind_dir"`
-			PressureMb float64 `json:"pressure_mb"`
-			PressureIn float64 `json:"pressure_in"`
-			PrecipMm   float64 `json:"precip_mm"`
-			PrecipIn   float64 `json:"precip_in"`
 			Humidity   int     `json:"humidity"`
-			Cloud      int     `json:"cloud"`
 			FeelslikeC float64 `json:"feelslike_c"`
 			FeelslikeF float64 `json:"feelslike_f"`
-			VisKm      float64 `json:"vis_km"`
-			VisMiles   float64 `json:"vis_miles"`
 			Uv         float64 `json:"uv"`
-			GustMph    float64 `json:"gust_mph"`
-			GustKph    float64 `json:"gust_kph"`
 		} `json:"current"`
 	}
 
@@ -186,6 +171,7 @@ func weather(w http.ResponseWriter, r *http.Request) {
 	city := APIDATA.Location.Name
 	region := APIDATA.Location.Region
 
+	condition := strings.ToLower(APIDATA.Current.Condition.Text)
 	tempC := APIDATA.Current.TempC
 	tempF := APIDATA.Current.TempF
 	windDir := APIDATA.Current.WindDir
@@ -202,6 +188,7 @@ func weather(w http.ResponseWriter, r *http.Request) {
 	censoredCity := strings.Replace(location, cityToCensor, "Birbland, Somewhere", -1)
 
 	type Data struct {
+		Condition  string
 		Location   string
 		TempC      float64
 		TempF      float64
@@ -213,7 +200,7 @@ func weather(w http.ResponseWriter, r *http.Request) {
 		FeelsLikeF float64
 	}
 
-	info := Data{censoredCity, tempC, tempF, windDir, windKPH, windMPH, humidity, feelsLikeC, feelsLikeF}
+	info := Data{condition, censoredCity, tempC, tempF, windDir, windKPH, windMPH, humidity, feelsLikeC, feelsLikeF}
 
 	tpl.ExecuteTemplate(w, "weather.gohtml", info)
 }
